@@ -58,7 +58,7 @@
       }) }}
 
       {% set authValues = [] %}
-      {% if data.authorisedToAct == "yes" %}
+      {% if authorisedYes %}
         {% set authValues = ["yes"] %}
       {% endif %}
 
@@ -74,7 +74,7 @@
       }) }}
 
       {% set contactConfirmValues = [] %}
-      {% if data.contactDetailsConfirmed == "yes" %}
+      {% if contactDetailsYes %}
         {% set contactConfirmValues = ["yes"] %}
       {% endif %}
 
@@ -83,7 +83,7 @@
         fieldset: {
           legend: { text: "Declaration", classes: "govuk-fieldset__legend--m" }
         },
-        errorMessage: { text: "Confirm the contact details are correct" } if contactsError and data.contactDetailsConfirmed != "yes",
+        errorMessage: { text: "Confirm the contact details are correct" } if contactsError and not contactDetailsYes,
         values: contactConfirmValues,
         items: [
           { value: "yes", text: "I declare that the contact details provided are correct" }

@@ -34,6 +34,15 @@ function consumeFlag (data, key) {
   return Boolean(v)
 }
 
+// GOV.UK Prototype Kit adds hidden _unchecked for checkboxes; body-parser can yield ['yes', '_unchecked'].
+function checkboxYes (val) {
+  if (val === 'yes') return true
+  if (Array.isArray(val)) {
+    return val.includes('yes')
+  }
+  return false
+}
+
 // --- Case / dashboard entry ---
 router.get('/case', (req, res) => {
   res.render('application/case-dashboard')
@@ -192,21 +201,31 @@ router.get(`${BASE}/contacts-and-access`, requireSetup, (req, res) => {
     if (!(data.primaryContactEmail || '').trim()) {
       contactsErrorList.push({ text: 'Enter the primary contact email', href: '#primaryContactEmail' })
     }
-    if (data.contactDetailsConfirmed !== 'yes') {
+    if (!checkboxYes(data.contactDetailsConfirmed)) {
       contactsErrorList.push({ text: 'Confirm the contact details are correct', href: '#contactDetailsConfirmed' })
     }
   }
-  res.render('application/contacts-and-access', { contactsError, contactsErrorList })
+  res.render('application/contacts-and-access', {
+    contactsError,
+    contactsErrorList,
+    contactDetailsYes: checkboxYes(data.contactDetailsConfirmed),
+    authorisedYes: checkboxYes(data.authorisedToAct)
+  })
 })
 
 router.post(`${BASE}/contacts-and-access`, requireSetup, (req, res) => {
   const name = ((req.body.primaryContactName || '') + '').trim()
   const email = ((req.body.primaryContactEmail || '') + '').trim()
-  const conf = req.body.contactDetailsConfirmed
-  const confirmed = conf === 'yes' || (Array.isArray(conf) && conf.includes('yes'))
+  const confirmed = checkboxYes(req.body.contactDetailsConfirmed)
   if (!name || !email || !confirmed) {
     req.session.data._contactsAccessError = true
     return res.redirect(`${BASE}/contacts-and-access`)
+  }
+  req.session.data.contactDetailsConfirmed = 'yes'
+  if (checkboxYes(req.body.authorisedToAct)) {
+    req.session.data.authorisedToAct = 'yes'
+  } else {
+    delete req.session.data.authorisedToAct
   }
   req.session.data.contactsAccessComplete = true
   res.redirect(`${BASE}/task-list`)
