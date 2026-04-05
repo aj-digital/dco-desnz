@@ -9,7 +9,7 @@
   }) }}
   {{ govukBreadcrumbs({
     items: [
-      { text: "Track list", href: "/application/task-list" },
+      { text: "Task list", href: "/application/task-list" },
       { text: "Planning permission status" }
     ]
   }) }}
@@ -34,32 +34,29 @@
 
       {% set grantedConditional %}
         <div class="govuk-form-group govuk-!-margin-top-4">
-          {{ govukFileUpload({
-            label: { text: "Upload planning decision notice", classes: "govuk-label--m" },
-            hint: { text: "Upload the planning decision notice or equivalent document. PDF only, maximum 50MB." },
-            id: "planningDecisionDocument",
-            name: "planningDecisionDocument_file",
-            errorMessage: { text: "Upload the planning decision notice" } if planningError and not data.planningDecisionDocument,
-            attributes: { "data-sync-to": "planningDecisionDocument" }
+          <label class="govuk-label govuk-label--m">Planning decision notice</label>
+          <div class="govuk-hint">Upload the planning decision notice or equivalent document. PDF only, maximum 50MB.</div>
+          
+          {% if planningDecisionDocuments | length > 0 %}
+            <ul class="govuk-list govuk-list--bullet">
+              {% for doc in planningDecisionDocuments %}
+                <li>{{ doc.filename }} ({{ doc.sizeBytes }})</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          
+          {{ govukButton({
+            text: "Upload planning decision notice" if planningDecisionDocuments | length == 0 else "Upload another decision notice",
+            href: "/application/upload-document?section=planningEnvironmental&field=planningDecisionDocument&returnUrl=/application/planning-and-environmental",
+            classes: "govuk-button--secondary"
           }) }}
-          <input type="hidden" name="planningDecisionDocument" value="{{ data.planningDecisionDocument or '' }}" />
-        </div>
-        <div class="govuk-form-group">
-          {{ govukFileUpload({
-            label: { text: "Upload committee report (optional)", classes: "govuk-label--m" },
-            hint: { text: "Upload one or more files. PDF, DOC or JPG, maximum 50MB per file." },
-            id: "planningCommitteeReport",
-            name: "planningCommitteeReport_file",
-            attributes: { "data-sync-to": "planningCommitteeReport" }
-          }) }}
-          <input type="hidden" name="planningCommitteeReport" value="{{ data.planningCommitteeReport or '' }}" />
         </div>
       {% endset %}
 
       {{ govukRadios({
         name: "planningStatus",
         idPrefix: "planningStatus",
-        value: data.planningStatus,
+        value: appState.planningEnvironmental.planningStatus,
         fieldset: {
           legend: {
             text: "What is the planning permission status?",
@@ -67,7 +64,7 @@
             classes: "govuk-fieldset__legend--m"
           }
         },
-        errorMessage: { text: "Select the planning permission status" } if planningError and not data.planningStatus,
+        errorMessage: { text: "Select the planning permission status" } if planningError and not appState.planningEnvironmental.planningStatus,
         items: [
           { value: "granted", text: "Granted", conditional: { html: grantedConditional } },
           { value: "pending", text: "Pending" },
@@ -76,23 +73,11 @@
         ]
       }) }}
 
-      {% set envYesConditional %}
-        <div class="govuk-form-group govuk-!-margin-top-4">
-          {{ govukFileUpload({
-            label: { text: "Upload environmental notice or supporting document (optional)", classes: "govuk-label--m" },
-            hint: { text: "Upload the environmental notice, screening opinion, or key supporting document. PDF only, maximum 50MB." },
-            id: "environmentalDocument",
-            name: "environmentalDocument_file",
-            attributes: { "data-sync-to": "environmentalDocument" }
-          }) }}
-          <input type="hidden" name="environmentalDocument" value="{{ data.environmentalDocument or '' }}" />
-        </div>
-      {% endset %}
 
       {{ govukRadios({
         name: "environmentalImpactRequired",
         idPrefix: "envImpact",
-        value: data.environmentalImpactRequired,
+        value: appState.planningEnvironmental.environmentalImpactRequired,
         fieldset: {
           legend: {
             text: "Is an environmental impact assessment required?",
@@ -100,9 +85,9 @@
             classes: "govuk-fieldset__legend--m"
           }
         },
-        errorMessage: { text: "Select whether environmental impact assessment is required" } if planningError and not data.environmentalImpactRequired,
+        errorMessage: { text: "Select whether environmental impact assessment is required" } if planningError and not appState.planningEnvironmental.environmentalImpactRequired,
         items: [
-          { value: "yes", text: "Yes", conditional: { html: envYesConditional } },
+          { value: "yes", text: "Yes" },
           { value: "no", text: "No" }
         ]
       }) }}
@@ -115,25 +100,3 @@
 </div>
 {% endblock %}
 
-{% block pageScripts %}
-<script>
-  (function() {
-    var form = document.getElementById('planning-form');
-    if (!form) return;
-    function syncFileToHidden(fileInput) {
-      var syncToName = fileInput.getAttribute('data-sync-to');
-      if (!syncToName) return;
-      var hidden = form.querySelector('input[name="' + syncToName + '"][type="hidden"]');
-      if (!hidden) return;
-      hidden.value = fileInput.files.length ? fileInput.files[0].name : '';
-    }
-    form.addEventListener('change', function(e) {
-      if (e.target.type !== 'file') return;
-      syncFileToHidden(e.target);
-    });
-    form.addEventListener('submit', function() {
-      form.querySelectorAll('input[type="file"][data-sync-to]').forEach(syncFileToHidden);
-    });
-  })();
-</script>
-{% endblock %}

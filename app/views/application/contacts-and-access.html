@@ -31,8 +31,8 @@
         id: "primaryContactName",
         name: "primaryContactName",
         autocomplete: "name",
-        value: data.primaryContactName,
-        errorMessage: { text: "Enter the primary contact name" } if contactsError and not data.primaryContactName,
+        value: appState.contactsAccess.primaryContactName,
+        errorMessage: { text: "Enter the primary contact name" } if contactsError and not appState.contactsAccess.primaryContactName,
         classes: "govuk-!-width-three-quarters"
       }) }}
 
@@ -42,8 +42,8 @@
         name: "primaryContactEmail",
         type: "email",
         autocomplete: "email",
-        value: data.primaryContactEmail,
-        errorMessage: { text: "Enter the primary contact email" } if contactsError and not data.primaryContactEmail,
+        value: appState.contactsAccess.primaryContactEmail,
+        errorMessage: { text: "Enter the primary contact email" } if contactsError and not appState.contactsAccess.primaryContactEmail,
         classes: "govuk-!-width-three-quarters"
       }) }}
 
@@ -53,7 +53,7 @@
         name: "primaryContactPhone",
         type: "tel",
         autocomplete: "tel",
-        value: data.primaryContactPhone,
+        value: appState.contactsAccess.primaryContactPhone,
         classes: "govuk-!-width-three-quarters"
       }) }}
 

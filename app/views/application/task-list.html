@@ -14,10 +14,10 @@
   <div class="govuk-grid-column-two-thirds">
 
     <h1 class="govuk-heading-xl">
-      {% if data.schemeName %}Application task list – {{ data.schemeName }}{% else %}CPO application{% endif %}
+      {% if appState.setup.schemeName %}Application task list – {{ appState.setup.schemeName }}{% else %}CPO application{% endif %}
     </h1>
 
-    {% if data.applicationSubmitted %}
+    {% if appState.status == "SUBMITTED" %}
       {{ govukNotificationBanner({
         type: "success",
         titleText: "Application submitted",
@@ -43,17 +43,17 @@
         {
           title: { text: "Upload core documents" },
           href: "/application/upload-core-documents",
-          status: (completedStatus if data.coreDocumentsComplete else incompleteStatus)
+          status: (completedStatus if appState.progress.coreDocumentsComplete else incompleteStatus)
         },
         {
           title: { text: "Planning permission status" },
           href: "/application/planning-and-environmental",
-          status: (completedStatus if data.planningEnvironmentalComplete else incompleteStatus)
+          status: (completedStatus if appState.progress.planningEnvironmentalComplete else incompleteStatus)
         },
         {
           title: { text: "Notices and service evidence" },
           href: "/application/notices-and-service-evidence",
-          status: (completedStatus if data.noticesEvidenceComplete else incompleteStatus)
+          status: (completedStatus if appState.progress.noticesEvidenceComplete else incompleteStatus)
         }
       ]
     }) }}
@@ -66,17 +66,17 @@
         {
           title: { text: "Contacts and access" },
           href: "/application/contacts-and-access",
-          status: (completedStatus if data.contactsAccessComplete else incompleteStatus)
+          status: (completedStatus if appState.progress.contactsAccessComplete else incompleteStatus)
         }
       ]
     }) }}
 
     <h2 class="govuk-heading-m govuk-!-margin-top-6">Review and submit</h2>
 
-    {% set allSectionsDone = data.coreDocumentsComplete and data.planningEnvironmentalComplete and data.noticesEvidenceComplete and data.contactsAccessComplete %}
-    {% set checkAnswersDone = data.checkAnswersComplete %}
+    {% set allSectionsDone = appState.progress.coreDocumentsComplete and appState.progress.planningEnvironmentalComplete and appState.progress.noticesEvidenceComplete and appState.progress.contactsAccessComplete %}
+    {% set checkAnswersDone = appState.progress.checkAnswersComplete %}
 
-    {% if data.applicationSubmitted %}
+    {% if appState.status == "SUBMITTED" %}
       {{ govukTaskList({
         idPrefix: "submit",
         items: [

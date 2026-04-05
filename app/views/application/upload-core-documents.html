@@ -26,46 +26,87 @@
 
     <form class="form" action="/application/upload-core-documents" method="post" novalidate id="upload-core-form">
 
-      {{ govukFileUpload({
-        label: { text: "Upload the made Compulsory Purchase Order (CPO)", classes: "govuk-label--m" },
-        hint: { text: "Upload one or more files. PDF, DOC or JPG, maximum 50MB per file." },
-        id: "coreOrderDocument",
-        name: "coreOrderDocument_file",
-        errorMessage: { text: "Upload the CPO document" } if coreDocsError and not data.coreOrderDocument,
-        attributes: { "data-sync-to": "coreOrderDocument" }
-      }) }}
-      <input type="hidden" name="coreOrderDocument" value="{{ data.coreOrderDocument or '' }}" />
+      <div class="govuk-form-group govuk-!-margin-top-6">
+        <label class="govuk-label govuk-label--m">Compulsory Purchase Order (CPO)</label>
+        <div class="govuk-hint">Upload one or more files. PDF, DOC or JPG, maximum 50MB per file.</div>
+        
+        {% if orderDocuments | length > 0 %}
+          <ul class="govuk-list govuk-list--bullet">
+            {% for doc in orderDocuments %}
+              <li>{{ doc.filename }} ({{ doc.sizeBytes }})</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        
+        {{ govukFileUpload({
+          id: "orderDocument",
+          name: "orderDocument",
+          label: { text: "Upload CPO document" },
+          classes: "govuk-!-margin-bottom-2"
+        }) }}
+      </div>
 
-      {{ govukFileUpload({
-        label: { text: "Upload the order map or maps", classes: "govuk-label--m" },
-        hint: { text: "Upload one or more files. Ensure all maps match your schedule of interests." },
-        id: "coreMapDocument",
-        name: "coreMapDocument_file",
-        errorMessage: { text: "Upload the order map or maps" } if coreDocsError and not data.coreMapDocument,
-        attributes: { "data-sync-to": "coreMapDocument" }
-      }) }}
-      <input type="hidden" name="coreMapDocument" value="{{ data.coreMapDocument or '' }}" />
+      <div class="govuk-form-group govuk-!-margin-top-6">
+        <label class="govuk-label govuk-label--m">Order map or maps</label>
+        <div class="govuk-hint">Upload one or more files. Ensure all maps match your schedule of interests.</div>
+        
+        {% if mapDocuments | length > 0 %}
+          <ul class="govuk-list govuk-list--bullet">
+            {% for doc in mapDocuments %}
+              <li>{{ doc.filename }} ({{ doc.sizeBytes }})</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        
+        {{ govukFileUpload({
+          id: "mapDocument",
+          name: "mapDocument",
+          label: { text: "Upload order map" },
+          classes: "govuk-!-margin-bottom-2"
+        }) }}
+      </div>
 
-      {{ govukFileUpload({
-        label: { text: "Upload the Statement of Reasons (SoR)", classes: "govuk-label--m" },
-        hint: { text: "PDF preferred, maximum 50MB" },
-        id: "coreStatementOfReasons",
-        name: "coreStatementOfReasons_file",
-        errorMessage: { text: "Upload the Statement of Reasons" } if coreDocsError and not data.coreStatementOfReasons,
-        attributes: { "data-sync-to": "coreStatementOfReasons" }
-      }) }}
-      <input type="hidden" name="coreStatementOfReasons" value="{{ data.coreStatementOfReasons or '' }}" />
+      <div class="govuk-form-group govuk-!-margin-top-6">
+        <label class="govuk-label govuk-label--m">Statement of Reasons (SoR)</label>
+        <div class="govuk-hint">PDF preferred, maximum 50MB</div>
+        
+        {% if statementOfReasonsDocuments | length > 0 %}
+          <ul class="govuk-list govuk-list--bullet">
+            {% for doc in statementOfReasonsDocuments %}
+              <li>{{ doc.filename }} ({{ doc.sizeBytes }})</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        
+        {{ govukFileUpload({
+          id: "statementOfReasons",
+          name: "statementOfReasons",
+          label: { text: "Upload Statement of Reasons" },
+          classes: "govuk-!-margin-bottom-2"
+        }) }}
+      </div>
 
-      {{ govukFileUpload({
-        label: { text: "Other core supporting documents (optional)", classes: "govuk-label--m" },
-        hint: { text: "Upload one or more files." },
-        id: "coreSupportingDocuments",
-        name: "coreSupportingDocuments_file",
-        attributes: { "data-sync-to": "coreSupportingDocuments" }
-      }) }}
-      <input type="hidden" name="coreSupportingDocuments" value="{{ data.coreSupportingDocuments or '' }}" />
+      <div class="govuk-form-group govuk-!-margin-top-6">
+        <label class="govuk-label govuk-label--m">Other core supporting documents (optional)</label>
+        <div class="govuk-hint">Upload one or more files.</div>
+        
+        {% if supportingDocuments | length > 0 %}
+          <ul class="govuk-list govuk-list--bullet">
+            {% for doc in supportingDocuments %}
+              <li>{{ doc.filename }} ({{ doc.sizeBytes }})</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        
+        {{ govukFileUpload({
+          id: "supportingDocuments",
+          name: "supportingDocuments",
+          label: { text: "Upload supporting document" },
+          classes: "govuk-!-margin-bottom-2"
+        }) }}
+      </div>
 
-      {% set coreCheckValues = data.coreConfirmations if data.coreConfirmations else [] %}
+      {% set coreCheckValues = confirmations if confirmations else [] %}
       {% if coreCheckValues is string %}
         {% set coreCheckValues = [coreCheckValues] %}
       {% endif %}
@@ -90,27 +131,4 @@
 
   </div>
 </div>
-{% endblock %}
-
-{% block pageScripts %}
-<script>
-  (function() {
-    var form = document.getElementById('upload-core-form');
-    if (!form) return;
-    function syncFileToHidden(fileInput) {
-      var syncToName = fileInput.getAttribute('data-sync-to');
-      if (!syncToName) return;
-      var hidden = form.querySelector('input[name="' + syncToName + '"][type="hidden"]');
-      if (!hidden) return;
-      hidden.value = fileInput.files.length ? fileInput.files[0].name : '';
-    }
-    form.addEventListener('change', function(e) {
-      if (e.target.type !== 'file') return;
-      syncFileToHidden(e.target);
-    });
-    form.addEventListener('submit', function() {
-      form.querySelectorAll('input[type="file"][data-sync-to]').forEach(syncFileToHidden);
-    });
-  })();
-</script>
 {% endblock %}

@@ -33,7 +33,7 @@
         hint: { text: "A reference of your choice to refer to this application." },
         id: "yourReference",
         name: "yourReference",
-        value: data.yourReference,
+        value: appState.setup.yourReference,
         classes: "govuk-!-width-three-quarters"
       }) }}
 
@@ -42,8 +42,8 @@
         hint: { text: "The authority making the CPO." },
         id: "acquiringAuthority",
         name: "acquiringAuthority",
-        value: data.acquiringAuthority,
-        errorMessage: { text: "Enter the acquiring authority" } if setupError and not data.acquiringAuthority,
+        value: appState.setup.acquiringAuthority,
+        errorMessage: { text: "Enter the acquiring authority" } if setupError and not appState.setup.acquiringAuthority,
         classes: "govuk-!-width-three-quarters"
       }) }}
 
@@ -52,7 +52,7 @@
         hint: { text: "The legislation that gives you power to make this compulsory purchase order." },
         id: "statutoryPower",
         name: "statutoryPower",
-        value: data.statutoryPower,
+        value: appState.setup.statutoryPower,
         items: [
           { value: "", text: "Select" },
           { value: "acquisition-land-act-1981", text: "Acquisition of Land Act 1981" },
@@ -66,15 +66,15 @@
         label: { text: "Scheme name", classes: "govuk-label--m" },
         id: "schemeName",
         name: "schemeName",
-        value: data.schemeName,
-        errorMessage: { text: "Enter the scheme name" } if setupError and not data.schemeName,
+        value: appState.setup.schemeName,
+        errorMessage: { text: "Enter the scheme name" } if setupError and not appState.setup.schemeName,
         classes: "govuk-!-width-three-quarters"
       }) }}
 
       {{ govukRadios({
         name: "schemeType",
         idPrefix: "schemeType",
-        value: data.schemeType,
+        value: appState.setup.schemeType,
         fieldset: {
           legend: { text: "Scheme type", classes: "govuk-fieldset__legend--m" }
         },
@@ -91,7 +91,7 @@
         label: { text: "Region or local authority", classes: "govuk-label--m" },
         id: "localAuthority",
         name: "localAuthority",
-        value: data.localAuthority,
+        value: appState.setup.localAuthority,
         hint: { text: "For example, North West, or Manchester City Council." },
         classes: "govuk-!-width-three-quarters"
       }) }}

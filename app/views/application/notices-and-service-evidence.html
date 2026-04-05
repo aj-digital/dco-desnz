@@ -31,7 +31,7 @@
       {{ govukRadios({
         name: "noticesServed",
         idPrefix: "noticesServed",
-        value: data.noticesServed,
+        value: appState.noticesEvidence.noticesServed,
         fieldset: {
           legend: {
             text: "Confirm all required notices have been served",
@@ -39,19 +39,19 @@
             classes: "govuk-fieldset__legend--m"
           }
         },
-        errorMessage: { text: "Confirm whether required notices have been served" } if noticesError and not data.noticesServed,
+        errorMessage: { text: "Confirm whether required notices have been served" } if noticesError and not appState.noticesEvidence.noticesServed,
         items: [
           { value: "yes", text: "Yes" },
           { value: "no", text: "No" }
         ]
       }) }}
 
-      {% if data.noticesServed == "yes" %}
+      {% if appState.noticesEvidence.noticesServed == "yes" %}
         {{ govukInput({
           label: { text: "Template notice", classes: "govuk-label--m" },
           id: "templateNoticeDocument",
           name: "templateNoticeDocument",
-          value: data.templateNoticeDocument,
+          value: appState.noticesEvidence.templateNoticeDocument,
           hint: { text: "Prototype: enter filename" },
           classes: "govuk-!-width-three-quarters"
         }) }}
@@ -60,7 +60,7 @@
           label: { text: "Certificate of service", classes: "govuk-label--m" },
           id: "certificateOfServiceDocument",
           name: "certificateOfServiceDocument",
-          value: data.certificateOfServiceDocument,
+          value: appState.noticesEvidence.certificateOfServiceDocument,
           hint: { text: "Prototype: enter filename" },
           classes: "govuk-!-width-three-quarters"
         }) }}
@@ -69,7 +69,7 @@
           label: { text: "Newspaper publication", classes: "govuk-label--m" },
           id: "newspaperPublicationDocument",
           name: "newspaperPublicationDocument",
-          value: data.newspaperPublicationDocument,
+          value: appState.noticesEvidence.newspaperPublicationDocument,
           hint: { text: "Prototype: enter filename" },
           classes: "govuk-!-width-three-quarters"
         }) }}
@@ -78,7 +78,7 @@
           label: { text: "Site notice", classes: "govuk-label--m" },
           id: "siteNoticeDocument",
           name: "siteNoticeDocument",
-          value: data.siteNoticeDocument,
+          value: appState.noticesEvidence.siteNoticeDocument,
           hint: { text: "Prototype: enter filename" },
           classes: "govuk-!-width-three-quarters"
         }) }}

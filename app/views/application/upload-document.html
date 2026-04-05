@@ -1,0 +1,45 @@
+{% extends "layouts/main.html" %}
+
+{% set pageName = "Upload document" %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: "Back",
+    href: returnUrl | default("javascript:history.back()")
+  }) }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <span class="govuk-caption-xl">Document upload</span>
+    <h1 class="govuk-heading-xl">Upload your file</h1>
+
+    <div class="govuk-inset-text">
+        <p>This is a simulated upload mimicking a two-step AWS S3 upload flow:</p>
+        <p>1. The prototype requests a presigned URL.</p>
+        <p>2. The client uploads the file directly to S3 and tells the backend it was completed.</p>
+    </div>
+
+    <form class="form" action="/application/upload-document" method="post" enctype="multipart/form-data">
+        
+        <input type="hidden" name="sectionKey" value="{{ sectionKey }}">
+        <input type="hidden" name="fieldKey" value="{{ fieldKey }}">
+        <input type="hidden" name="returnUrl" value="{{ returnUrl }}">
+
+        {{ govukFileUpload({
+            id: "documentFile",
+            name: "documentFile",
+            label: {
+                text: "Upload a file"
+            }
+        }) }}
+
+      {{ govukButton({ text: "Upload document" }) }}
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

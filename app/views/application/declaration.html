@@ -31,7 +31,7 @@
     <form class="form" action="/application/submit" method="post" novalidate>
 
       {% set declValues = [] %}
-      {% if data.declarationAgreed == "yes" %}
+      {% if appState.submission.declarationAgreed %}
         {% set declValues = ["yes"] %}
       {% endif %}
 

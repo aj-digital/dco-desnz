@@ -19,159 +19,153 @@
 
     {{ govukSummaryList({
       card: {
-        title: { text: "Basic details" }
+        title: { text: "Basic details" },
+        actions: { items: [{ href: "/application/setup", text: "Change", visuallyHiddenText: "basic details" }] }
       },
       rows: [
         {
           key: { text: "Your reference" },
-          value: { text: data.yourReference or "Not provided" },
-          actions: { items: [{ href: "/application/setup", text: "Change", visuallyHiddenText: "your reference" }] }
+          value: { text: appState.setup.yourReference or "Not provided" }
         },
         {
           key: { text: "Acquiring authority" },
-          value: { text: data.acquiringAuthority or "—" },
-          actions: { items: [{ href: "/application/setup", text: "Change", visuallyHiddenText: "acquiring authority" }] }
+          value: { text: appState.setup.acquiringAuthority or "—" }
         },
         {
           key: { text: "Statutory power" },
-          value: { text: data.statutoryPower or "—" },
-          actions: { items: [{ href: "/application/setup", text: "Change", visuallyHiddenText: "statutory power" }] }
+          value: { text: appState.setup.statutoryPower or "—" }
         },
         {
           key: { text: "Scheme name" },
-          value: { text: data.schemeName or "—" },
-          actions: { items: [{ href: "/application/setup", text: "Change", visuallyHiddenText: "scheme name" }] }
+          value: { text: appState.setup.schemeName or "—" }
         },
         {
           key: { text: "Scheme type" },
-          value: { text: data.schemeType or "—" },
-          actions: { items: [{ href: "/application/setup", text: "Change", visuallyHiddenText: "scheme type" }] }
+          value: { text: appState.setup.schemeType or "—" }
         },
         {
           key: { text: "Region or local authority" },
-          value: { text: data.localAuthority or "Not provided" },
-          actions: { items: [{ href: "/application/setup", text: "Change", visuallyHiddenText: "region or local authority" }] }
+          value: { text: appState.setup.localAuthority or "Not provided" }
         }
       ]
     }) }}
 
+    {% set orderDocsHtml %}
+      {% if orderDocuments | length %}
+        <ul class="govuk-list govuk-list--bullet">{% for doc in orderDocuments %}<li>{{ doc.filename }}</li>{% endfor %}</ul>
+      {% else %}—{% endif %}
+    {% endset %}
+
+    {% set mapDocsHtml %}
+      {% if mapDocuments | length %}
+        <ul class="govuk-list govuk-list--bullet">{% for doc in mapDocuments %}<li>{{ doc.filename }}</li>{% endfor %}</ul>
+      {% else %}—{% endif %}
+    {% endset %}
+
+    {% set sorDocsHtml %}
+      {% if statementOfReasonsDocuments | length %}
+        <ul class="govuk-list govuk-list--bullet">{% for doc in statementOfReasonsDocuments %}<li>{{ doc.filename }}</li>{% endfor %}</ul>
+      {% else %}—{% endif %}
+    {% endset %}
+
     {{ govukSummaryList({
       card: {
-        title: { text: "Upload core documents" }
+        title: { text: "Upload core documents" },
+        actions: { items: [{ href: "/application/upload-core-documents", text: "Change", visuallyHiddenText: "core documents" }] }
       },
       rows: [
         {
           key: { text: "Made CPO" },
-          value: { text: data.coreOrderDocument or "—" },
-          actions: { items: [{ href: "/application/upload-core-documents", text: "Change", visuallyHiddenText: "core documents" }] }
+          value: { html: orderDocsHtml }
         },
         {
           key: { text: "Order map or maps" },
-          value: { text: data.coreMapDocument or "—" },
-          actions: { items: [] }
+          value: { html: mapDocsHtml }
         },
         {
           key: { text: "Statement of Reasons" },
-          value: { text: data.coreStatementOfReasons or "—" },
-          actions: { items: [] }
-        },
-        {
-          key: { text: "Supporting documents" },
-          value: { text: data.coreSupportingDocuments or "Not provided" },
-          actions: { items: [] }
+          value: { html: sorDocsHtml }
         }
       ]
     }) }}
 
     {% set planningStatusLabels = { granted: "Granted", pending: "Pending", "not-required": "Not required", other: "Other" } %}
-    {% set planningStatusText = planningStatusLabels[data.planningStatus] or "—" %}
-    {% set envText = (data.environmentalImpactRequired == "yes") and "Yes" or ((data.environmentalImpactRequired == "no") and "No" or "—") %}
+    {% set planningStatusText = planningStatusLabels[appState.planningEnvironmental.planningStatus] or "—" %}
+    {% set envText = (appState.planningEnvironmental.environmentalImpactRequired == "yes") and "Yes" or ((appState.planningEnvironmental.environmentalImpactRequired == "no") and "No" or "—") %}
+
+    {% set decisionDocsHtml %}
+      {% if planningDecisionDocuments | length %}
+        <ul class="govuk-list govuk-list--bullet">{% for doc in planningDecisionDocuments %}<li>{{ doc.filename }}</li>{% endfor %}</ul>
+      {% else %}—{% endif %}
+    {% endset %}
 
     {{ govukSummaryList({
       card: {
-        title: { text: "Planning and environmental" }
+        title: { text: "Planning and environmental" },
+        actions: { items: [{ href: "/application/planning-and-environmental", text: "Change", visuallyHiddenText: "planning and environmental" }] }
       },
       rows: [
         {
           key: { text: "Planning permission status" },
-          value: { text: planningStatusText },
-          actions: { items: [{ href: "/application/planning-and-environmental", text: "Change", visuallyHiddenText: "planning and environmental" }] }
+          value: { text: planningStatusText }
         },
         {
           key: { text: "Planning decision notice" },
-          value: { text: data.planningDecisionDocument or "—" },
-          actions: { items: [] }
-        },
-        {
-          key: { text: "Committee report" },
-          value: { text: data.planningCommitteeReport or "Not provided" },
-          actions: { items: [] }
+          value: { html: decisionDocsHtml }
         },
         {
           key: { text: "Environmental impact assessment required" },
-          value: { text: envText },
-          actions: { items: [] }
-        },
-        {
-          key: { text: "Environmental document" },
-          value: { text: data.environmentalDocument or "—" },
-          actions: { items: [] }
+          value: { text: envText }
         }
       ]
     }) }}
 
     {{ govukSummaryList({
       card: {
-        title: { text: "Notices and service evidence" }
+        title: { text: "Notices and service evidence" },
+        actions: { items: [{ href: "/application/notices-and-service-evidence", text: "Change", visuallyHiddenText: "notices and service evidence" }] }
       },
       rows: [
         {
           key: { text: "Required notices served" },
-          value: { text: (data.noticesServed == "yes") and "Yes" or ((data.noticesServed == "no") and "No" or "—") },
-          actions: { items: [{ href: "/application/notices-and-service-evidence", text: "Change", visuallyHiddenText: "notices and service evidence" }] }
+          value: { text: (appState.noticesEvidence.noticesServed == "yes") and "Yes" or ((appState.noticesEvidence.noticesServed == "no") and "No" or "—") }
         },
         {
           key: { text: "Template notice" },
-          value: { text: data.templateNoticeDocument or "—" },
-          actions: { items: [] }
+          value: { text: appState.noticesEvidence.templateNoticeDocument or "—" }
         },
         {
           key: { text: "Certificate of service" },
-          value: { text: data.certificateOfServiceDocument or "—" },
-          actions: { items: [] }
+          value: { text: appState.noticesEvidence.certificateOfServiceDocument or "—" }
         },
         {
           key: { text: "Newspaper publication" },
-          value: { text: data.newspaperPublicationDocument or "—" },
-          actions: { items: [] }
+          value: { text: appState.noticesEvidence.newspaperPublicationDocument or "—" }
         },
         {
           key: { text: "Site notice" },
-          value: { text: data.siteNoticeDocument or "—" },
-          actions: { items: [] }
+          value: { text: appState.noticesEvidence.siteNoticeDocument or "—" }
         }
       ]
     }) }}
 
     {{ govukSummaryList({
       card: {
-        title: { text: "Contacts and access" }
+        title: { text: "Contacts and access" },
+        actions: { items: [{ href: "/application/contacts-and-access", text: "Change", visuallyHiddenText: "contacts and access" }] }
       },
       rows: [
         {
           key: { text: "Name" },
-          value: { text: data.primaryContactName or "—" },
-          actions: { items: [{ href: "/application/contacts-and-access", text: "Change", visuallyHiddenText: "contacts and access" }] }
+          value: { text: appState.contactsAccess.primaryContactName or "—" }
         },
         {
           key: { text: "Email" },
-          value: { text: data.primaryContactEmail or "—" },
-          actions: { items: [] }
+          value: { text: appState.contactsAccess.primaryContactEmail or "—" }
         },
         {
           key: { text: "Phone" },
-          value: { text: data.primaryContactPhone or "Not provided" },
-          actions: { items: [] }
+          value: { text: appState.contactsAccess.primaryContactPhone or "Not provided" }
         }
       ]
     }) }}
