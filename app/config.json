@@ -1,7 +1,7 @@
 {
   "serviceName": "Development Consent Order service",
   "useServiceNavigation": true,
-  "useAuth": "false",
+  "useAuth": "true",
   "plugins": {
     "govuk-frontend": {
       "rebrand": true
