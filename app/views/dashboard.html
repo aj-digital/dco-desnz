@@ -1,0 +1,109 @@
+{% extends "layouts/main.html" %}
+
+{% set pageName = "Your DCO cases" %}
+
+{% block header %}
+  {{ govukHeader({
+    homepageUrl: "#",
+    serviceName: "Development Consent Order service",
+    serviceUrl: "/"
+  }) }}
+{% endblock %}
+
+{% block beforeContent %}
+<div style="background-color: #f3f2f1; padding: 15px 20px; text-align: right; margin-bottom: 30px;">
+  <style>
+    .subnav-link {
+      margin-left: 20px;
+      font-size: 19px;
+      text-decoration: none;
+      color: #1d70b8;
+    }
+    .subnav-link:hover {
+      text-decoration: underline;
+    }
+    .subnav-active {
+      margin-left: 20px;
+      font-size: 19px;
+      font-weight: bold;
+      color: #0b0c0c;
+      border-bottom: 4px solid #1d70b8;
+      padding-bottom: 15px;
+    }
+  </style>
+
+  <span class="subnav-active">Your cases</span>
+  <a href="#" class="subnav-link" style="text-decoration: underline;">Account</a>
+  <a href="/sign-out" class="subnav-link" style="text-decoration: underline;">Sign out</a>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+
+    <h1 class="govuk-heading-xl">Your DCO cases</h1>
+
+    <p class="govuk-body-l">
+      These are the Development Consent Order cases associated with your account. Select a case to view its current status or make a payment.
+    </p>
+
+    <table class="govuk-table">
+      <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">Your DCO cases</caption>
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">Case reference</th>
+          <th scope="col" class="govuk-table__header">Project</th>
+          <th scope="col" class="govuk-table__header">Status</th>
+          <th scope="col" class="govuk-table__header">Payment</th>
+          <th scope="col" class="govuk-table__header">Date received</th>
+          <th scope="col" class="govuk-table__header">Action</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        {% for dcoCase in data.dcoCases %}
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">
+            <a href="/dco-status/{{ dcoCase.id }}" class="govuk-link">{{ dcoCase.caseReference }}</a>
+          </td>
+          <td class="govuk-table__cell">{{ dcoCase.projectName }}</td>
+          <td class="govuk-table__cell">
+            {% if dcoCase.status == 'Decision issued' %}
+              <strong class="govuk-tag govuk-tag--green">{{ dcoCase.status }}</strong>
+            {% elif dcoCase.status == 'Decision being finalised' %}
+              <strong class="govuk-tag govuk-tag--purple">{{ dcoCase.status }}</strong>
+            {% elif dcoCase.status == 'Further information or consultation in progress' %}
+              <strong class="govuk-tag govuk-tag--yellow">{{ dcoCase.status }}</strong>
+            {% else %}
+              <strong class="govuk-tag govuk-tag--blue">{{ dcoCase.status }}</strong>
+            {% endif %}
+          </td>
+          <td class="govuk-table__cell">
+            {% if dcoCase.paymentStatus == 'Payment required' %}
+              <strong class="govuk-tag govuk-tag--red">{{ dcoCase.paymentStatus }}</strong>
+            {% elif dcoCase.paymentStatus == 'Payment pending' %}
+              <strong class="govuk-tag govuk-tag--yellow">{{ dcoCase.paymentStatus }}</strong>
+            {% elif dcoCase.paymentStatus == 'Payment received' %}
+              <strong class="govuk-tag govuk-tag--green">{{ dcoCase.paymentStatus }}</strong>
+            {% else %}
+              <span class="govuk-body">—</span>
+            {% endif %}
+          </td>
+          <td class="govuk-table__cell">{{ dcoCase.dateReceived }}</td>
+          <td class="govuk-table__cell">
+            <a href="/dco-status/{{ dcoCase.id }}" class="govuk-link">View</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="govuk-inset-text">
+      Only cases that have been referred to DESNZ for decision are shown here. If you are expecting to see a case that is not listed, it may still be with the Planning Inspectorate.
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

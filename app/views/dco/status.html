@@ -1,0 +1,234 @@
+{% extends "layouts/main.html" %}
+
+{% set pageName = "Your DCO case" %}
+
+{% block header %}
+  {{ govukHeader({
+    homepageUrl: "#",
+    serviceName: "Development Consent Order service",
+    serviceUrl: "/"
+  }) }}
+{% endblock %}
+
+{% block beforeContent %}
+<div style="background-color: #f3f2f1; padding: 15px 20px; text-align: right; margin-bottom: 30px;">
+  <style>
+    .subnav-link {
+      margin-left: 20px;
+      font-size: 19px;
+      text-decoration: none;
+      color: #1d70b8;
+    }
+    .subnav-link:hover {
+      text-decoration: underline;
+    }
+    .subnav-active {
+      margin-left: 20px;
+      font-size: 19px;
+      font-weight: bold;
+      color: #0b0c0c;
+      border-bottom: 4px solid #1d70b8;
+      padding-bottom: 15px;
+    }
+  </style>
+
+  <a href="/dashboard" class="subnav-link" style="text-decoration: underline;">Your cases</a>
+  <span class="subnav-active">Case detail</span>
+  <a href="#" class="subnav-link" style="text-decoration: underline;">Account</a>
+  <a href="/sign-out" class="subnav-link" style="text-decoration: underline;">Sign out</a>
+</div>
+
+{{ govukBackLink({
+  text: "Back to your cases",
+  href: "/dashboard"
+}) }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <span class="govuk-caption-xl">{{ dcoCase.caseReference }}</span>
+    <h1 class="govuk-heading-xl">{{ dcoCase.projectName }}</h1>
+
+    <p class="govuk-body-l">
+      Your DCO case is now with the Department for Energy Security and Net Zero (DESNZ) for decision.
+    </p>
+
+    <div class="govuk-inset-text">
+      Use this service to view the current status of your case and make payment if requested. Your substantive DCO application was submitted through the statutory route and examined by the Planning Inspectorate.
+    </div>
+
+    <h2 class="govuk-heading-m">Case details</h2>
+
+    {{ govukSummaryList({
+      rows: [
+        {
+          key: { text: "Project name" },
+          value: { text: dcoCase.projectName }
+        },
+        {
+          key: { text: "DCO case reference" },
+          value: { text: dcoCase.caseReference }
+        },
+        {
+          key: { text: "Current status" },
+          value: {
+            html: '<strong class="govuk-tag govuk-tag--blue">' + dcoCase.status + '</strong>'
+          }
+        },
+        {
+          key: { text: "Date received by DESNZ" },
+          value: { text: dcoCase.dateReceived }
+        },
+        {
+          key: { text: "Statutory decision deadline" },
+          value: { text: dcoCase.decisionDeadline }
+        }
+      ]
+    }) }}
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <h2 class="govuk-heading-m">Payment</h2>
+
+    {% if dcoCase.paymentStatus == 'Payment received' %}
+
+      {{ govukSummaryList({
+        rows: [
+          {
+            key: { text: "Payment status" },
+            value: {
+              html: '<strong class="govuk-tag govuk-tag--green">Payment received</strong>'
+            }
+          },
+          {
+            key: { text: "Amount paid" },
+            value: { text: dcoCase.paymentAmount }
+          }
+        ]
+      }) }}
+
+      <p class="govuk-body">Your payment has been received. No further action is needed.</p>
+
+    {% elif dcoCase.paymentStatus == 'Payment required' %}
+
+      {{ govukSummaryList({
+        rows: [
+          {
+            key: { text: "Payment status" },
+            value: {
+              html: '<strong class="govuk-tag govuk-tag--red">Payment required</strong>'
+            }
+          },
+          {
+            key: { text: "Amount due" },
+            value: { text: dcoCase.paymentAmount }
+          }
+        ]
+      }) }}
+
+      <p class="govuk-body">A payment is required for your DCO case. Please make payment to avoid delays to the processing of your case.</p>
+
+      {{ govukButton({
+        text: "Make payment",
+        href: "/payment/" + dcoCase.id
+      }) }}
+
+    {% elif dcoCase.paymentStatus == 'Payment pending' %}
+
+      {{ govukSummaryList({
+        rows: [
+          {
+            key: { text: "Payment status" },
+            value: {
+              html: '<strong class="govuk-tag govuk-tag--yellow">Payment pending</strong>'
+            }
+          },
+          {
+            key: { text: "Amount due" },
+            value: { text: dcoCase.paymentAmount }
+          }
+        ]
+      }) }}
+
+      <p class="govuk-body">Your payment is being processed. This may take up to 3 working days.</p>
+
+    {% else %}
+
+      <p class="govuk-body">No payment is currently required for your case.</p>
+
+    {% endif %}
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <h2 class="govuk-heading-m">Status explanation</h2>
+
+    <details class="govuk-details">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          What each status means
+        </span>
+      </summary>
+      <div class="govuk-details__text">
+        <table class="govuk-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header">Status</th>
+              <th scope="col" class="govuk-table__header">What it means</th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--blue">Received by DESNZ</strong></td>
+              <td class="govuk-table__cell">DESNZ has received the case file from the Planning Inspectorate and is preparing to review it.</td>
+            </tr>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--blue">Under review</strong></td>
+              <td class="govuk-table__cell">DESNZ is actively reviewing the examining authority's report and recommendation.</td>
+            </tr>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--yellow">Further information or consultation in progress</strong></td>
+              <td class="govuk-table__cell">DESNZ has requested additional information or is consulting with relevant parties before making a decision.</td>
+            </tr>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--purple">Decision being finalised</strong></td>
+              <td class="govuk-table__cell">The Secretary of State is finalising the decision on your DCO application.</td>
+            </tr>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--green">Decision issued</strong></td>
+              <td class="govuk-table__cell">A decision has been issued. You will have received a decision letter and any relevant documentation.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+  </div>
+
+  <div class="govuk-grid-column-one-third">
+
+    <aside class="govuk-!-margin-top-8" role="complementary">
+      <h2 class="govuk-heading-s" style="border-top: 2px solid #1d70b8; padding-top: 15px;">
+        Related links
+      </h2>
+      <nav aria-label="Related links">
+        <ul class="govuk-list govuk-!-font-size-16">
+          <li>
+            <a href="#" class="govuk-link">Planning Inspectorate — National Infrastructure</a>
+          </li>
+          <li>
+            <a href="#" class="govuk-link">Guidance on Development Consent Orders</a>
+          </li>
+          <li>
+            <a href="#" class="govuk-link">Contact DESNZ</a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+  </div>
+</div>
+
+{% endblock %}

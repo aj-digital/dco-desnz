@@ -1,0 +1,119 @@
+{% extends "layouts/main.html" %}
+
+{% set pageName = "Make a payment" %}
+
+{% block header %}
+  {{ govukHeader({
+    homepageUrl: "#",
+    serviceName: "Development Consent Order service",
+    serviceUrl: "/"
+  }) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: "Back",
+    href: "/dco-status/" + dcoCase.id
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-l">Make a payment</h1>
+
+    <p class="govuk-body">A fee is required for the processing of your Development Consent Order case.</p>
+
+    <table class="govuk-table">
+      <caption class="govuk-table__caption govuk-table__caption--m">Payment summary</caption>
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">Description</th>
+          <th scope="col" class="govuk-table__header govuk-table__header--numeric">Amount</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">DCO case reference: {{ dcoCase.caseReference }}</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric">{{ dcoCase.paymentAmount }}</td>
+        </tr>
+        <tr class="govuk-table__row">
+          <td class="govuk-table__cell">Project: {{ dcoCase.projectName }}</td>
+          <td class="govuk-table__cell govuk-table__cell--numeric"></td>
+        </tr>
+        <tr class="govuk-table__row">
+          <th scope="row" class="govuk-table__header">Total to pay</th>
+          <td class="govuk-table__cell govuk-table__cell--numeric"><strong>{{ dcoCase.paymentAmount }}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <h2 class="govuk-heading-m">Card details</h2>
+
+    <p class="govuk-body govuk-!-margin-bottom-2">
+      <em>This is a prototype. No real payment will be taken.</em>
+    </p>
+
+    <form class="form" action="/payment/{{ dcoCase.id }}" method="post">
+
+      {{ govukInput({
+        label: {
+          text: "Card number"
+        },
+        id: "card-number",
+        name: "cardNumber",
+        classes: "govuk-input--width-20",
+        autocomplete: "cc-number",
+        inputmode: "numeric"
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: "Expiry date"
+        },
+        hint: {
+          text: "For example, 03/28"
+        },
+        id: "expiry-date",
+        name: "expiryDate",
+        classes: "govuk-input--width-5",
+        autocomplete: "cc-exp"
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: "Name on card"
+        },
+        id: "card-name",
+        name: "cardName",
+        autocomplete: "cc-name"
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: "Card security code"
+        },
+        hint: {
+          text: "The last 3 digits on the back of the card"
+        },
+        id: "cvc",
+        name: "cvc",
+        classes: "govuk-input--width-3",
+        autocomplete: "cc-csc",
+        inputmode: "numeric"
+      }) }}
+
+      {{ govukButton({
+        text: "Pay " + dcoCase.paymentAmount + " now"
+      }) }}
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

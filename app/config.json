@@ -1,5 +1,5 @@
 {
-  "serviceName": "Compulsory purchase order application",
+  "serviceName": "Development Consent Order service",
   "useServiceNavigation": true,
   "plugins": {
     "govuk-frontend": {

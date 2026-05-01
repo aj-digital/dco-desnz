@@ -1,11 +1,11 @@
 {% extends "layouts/main.html" %}
 
-{% set pageName="Sign in" %}
+{% set pageName = "Sign in" %}
 
 {% block beforeContent %}
   {{ govukBackLink({
     text: "Back",
-    href: "/pre-application/start"
+    href: "/start"
   }) }}
 {% endblock %}
 
@@ -14,9 +14,13 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 
-    <form class="form" action="/pre-application/sign-in" method="post">
+    <form class="form" action="/sign-in" method="post">
 
       <h1 class="govuk-heading-l">Sign in to your account</h1>
+
+      <p class="govuk-body">
+        Sign in with your GOV.UK One Login to view the status of your Development Consent Order case.
+      </p>
 
       {{ govukInput({
         label: {
@@ -43,7 +47,7 @@
       }) }}
 
       <p class="govuk-body">
-        <a href="#" class="govuk-link">Create an account</a> if you do not have one.
+        <a href="/create-account" class="govuk-link">Create an account</a> if you do not have one.
       </p>
 
     </form>

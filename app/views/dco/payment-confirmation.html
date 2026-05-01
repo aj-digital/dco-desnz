@@ -1,0 +1,78 @@
+{% extends "layouts/main.html" %}
+
+{% set pageName = "Payment confirmed" %}
+
+{% block header %}
+  {{ govukHeader({
+    homepageUrl: "#",
+    serviceName: "Development Consent Order service",
+    serviceUrl: "/"
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {{ govukPanel({
+      titleText: "Payment received",
+      html: "Your payment of <strong>" + dcoCase.paymentAmount + "</strong> has been received<br><br>Case reference<br><strong>" + dcoCase.caseReference + "</strong>"
+    }) }}
+
+    <p class="govuk-body">We have sent a payment confirmation to your registered email address.</p>
+
+    <h2 class="govuk-heading-m">What happens next</h2>
+
+    <p class="govuk-body">
+      DESNZ will continue to review your Development Consent Order case. You do not need to take any further action at this time.
+    </p>
+
+    <p class="govuk-body">
+      You can return to <a href="/dco-status/{{ dcoCase.id }}" class="govuk-link">your case status page</a> at any time to check progress.
+    </p>
+
+    <p class="govuk-body">
+      If DESNZ requires any further information from you, they will contact you using the details on your account.
+    </p>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    {{ govukSummaryList({
+      card: {
+        title: {
+          text: "Payment details"
+        }
+      },
+      rows: [
+        {
+          key: { text: "Case reference" },
+          value: { text: dcoCase.caseReference }
+        },
+        {
+          key: { text: "Project" },
+          value: { text: dcoCase.projectName }
+        },
+        {
+          key: { text: "Amount paid" },
+          value: { text: dcoCase.paymentAmount }
+        },
+        {
+          key: { text: "Payment status" },
+          value: {
+            html: '<strong class="govuk-tag govuk-tag--green">Payment received</strong>'
+          }
+        }
+      ]
+    }) }}
+
+    <p class="govuk-body govuk-!-margin-top-4">
+      <a href="/dco-status/{{ dcoCase.id }}" class="govuk-link">Return to your case</a>
+      <br>
+      <a href="/dashboard" class="govuk-link govuk-!-margin-top-2" style="display: inline-block; margin-top: 10px;">View all your cases</a>
+    </p>
+
+  </div>
+</div>
+
+{% endblock %}

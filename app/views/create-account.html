@@ -1,0 +1,73 @@
+{% extends "layouts/main.html" %}
+
+{% set pageName = "Create an account" %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: "Back",
+    href: "/sign-in"
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <form class="form" action="/create-account" method="post">
+
+      <h1 class="govuk-heading-l">Create a GOV.UK One Login</h1>
+
+      <p class="govuk-body">
+        Create an account to view the status of your Development Consent Order case with DESNZ.
+      </p>
+
+      {{ govukInput({
+        label: {
+          text: "Full name"
+        },
+        id: "full-name",
+        name: "fullName",
+        autocomplete: "name"
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: "Email address"
+        },
+        hint: {
+          text: "Use the email address associated with your DCO case"
+        },
+        id: "email",
+        name: "email",
+        type: "email",
+        autocomplete: "email"
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: "Create a password"
+        },
+        hint: {
+          text: "Must be at least 8 characters"
+        },
+        id: "password",
+        name: "password",
+        type: "password",
+        autocomplete: "new-password"
+      }) }}
+
+      {{ govukButton({
+        text: "Create account"
+      }) }}
+
+      <p class="govuk-body">
+        Already have an account? <a href="/sign-in" class="govuk-link">Sign in</a>.
+      </p>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}
